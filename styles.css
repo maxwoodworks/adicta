@@ -1,0 +1,149 @@
+/* The 1366 × 768 Photoshop artboard sets the scale. Three equal columns
+   establish the thirds; all repeated illustrations share one size and axis. */
+:root {
+  color-scheme: light;
+  --paper: #ac57c0;
+  --ink: #752131;
+  --unit: min(.07320644vw, .13020833svh);
+  --edge-margin: calc(26 * var(--unit));
+  --float-x: calc(18 * var(--unit));
+  --float-y: calc(22 * var(--unit));
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { background: var(--paper); }
+img { display: block; width: 100%; height: auto; }
+h1, h2, p { margin: 0; }
+.page {
+  min-height: 100svh;
+  color: var(--ink);
+  background-color: #ac57c0;
+  background-image: url('./assets/paper-texture.webp');
+  background-size: calc(256 * var(--unit)) calc(256 * var(--unit));
+  background-position: center top;
+  animation: grain-shift 4s steps(1, end) infinite;
+  filter: invert(0);
+  transition: filter 240ms ease;
+}
+html[data-inverted="true"] { --paper: #53a83f; }
+html[data-inverted="true"] .page { filter: invert(1); }
+.composition {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-height: 100svh;
+  padding-block: calc(24 * var(--unit));
+}
+.copy-column {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  padding-left: var(--edge-margin);
+}
+.chapter { display: flex; flex-direction: column; align-items: flex-start; gap: calc(46 * var(--unit)); }
+.wordmark { width: calc(128 * var(--unit)); }
+.copy-art { width: calc(310 * var(--unit)); max-width: 100%; }
+.manifesto { width: calc(320 * var(--unit)); }
+.corn-column { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; }
+.corn-caption { position: absolute; max-width: 100%; }
+.corn-caption-top { top: 0; width: calc(102 * var(--unit)); }
+.corn-caption-bottom { bottom: 0; width: calc(162 * var(--unit)); }
+.corn-button {
+  appearance: none;
+  position: relative;
+  display: block;
+  width: calc(139 * var(--unit));
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.corn-drift {
+  display: block;
+  animation: float 8s ease-in-out infinite;
+  transform-origin: center;
+}
+.corn {
+  transition: transform 240ms ease;
+  transform-origin: center;
+  user-select: none;
+}
+.corn-button:focus-visible { outline: 2px solid #752131; outline-offset: 14px; }
+.corn-button:focus-visible .corn { transform: scale(1.045); }
+@media (hover: hover) {
+  .corn-button:hover .corn { transform: scale(1.045); }
+}
+.emblems {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  place-items: center end;
+  padding-right: var(--edge-margin);
+}
+.emblems img { width: calc(221 * var(--unit)); max-width: 80%; user-select: none; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@keyframes float {
+  0%, 100% { transform: translate(calc(-.65 * var(--float-x)), calc(.4 * var(--float-y))) rotate(-3deg); }
+  25% { transform: translate(calc(.6 * var(--float-x)), calc(-1 * var(--float-y))) rotate(2deg); }
+  50% { transform: translate(var(--float-x), calc(.25 * var(--float-y))) rotate(3deg); }
+  75% { transform: translate(calc(-1 * var(--float-x)), calc(.75 * var(--float-y))) rotate(-2deg); }
+}
+/* Eight held frames: the texture jumps every half-second without moving the artwork. */
+@keyframes grain-shift {
+  0%, 100% { background-position: 0 0; }
+  12.5% { background-position: 23px -41px; }
+  25% { background-position: -47px 17px; }
+  37.5% { background-position: 61px 53px; }
+  50% { background-position: -19px -67px; }
+  62.5% { background-position: 43px -29px; }
+  75% { background-position: -71px 37px; }
+  87.5% { background-position: 11px 79px; }
+}
+/* Preserve readable artwork on portrait screens: copy and corn above,
+   with the three emblems as an equally spaced row beneath them. */
+@media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  :root { --edge-margin: clamp(24px, 5vw, 48px); --float-x: 7px; --float-y: 14px; }
+  .page { background-size: 256px 256px; }
+  .composition {
+    height: 100svh;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas: 'copy corn' 'emblems emblems';
+    gap: 36px 24px;
+    padding: var(--edge-margin);
+    padding-bottom: max(var(--edge-margin), env(safe-area-inset-bottom));
+  }
+  .copy-column { grid-area: copy; grid-template-rows: auto auto; align-content: start; min-height: 0; overflow-y: auto; gap: min(36px, 4svh); padding: 0; scrollbar-width: none; }
+  .chapter { gap: min(24px, 3svh); }
+  .wordmark { width: clamp(82px, 20vw, 128px); }
+  .copy-art { width: 100%; max-width: 360px; }
+  .corn-column { grid-area: corn; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; gap: 24px; }
+  .corn-button { width: min(100%, 190px, calc((100svh - 300px) * .3564)); }
+  .corn-caption { position: static; }
+  .corn-caption-top { width: 102px; }
+  .corn-caption-bottom { width: 162px; }
+  .emblems { grid-area: emblems; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto; align-items: end; justify-items: center; gap: 24px; padding-right: 0; }
+  .emblems img { width: min(100%, 180px, 18svh); max-width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page, .corn-drift { animation: none; }
+  .page, .corn { transition: none; }
+}
+@media print {
+  .page { filter: none !important; print-color-adjust: exact; }
+  .page, .corn-drift { animation: none; }
+}
